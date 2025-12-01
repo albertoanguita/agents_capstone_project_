@@ -77,3 +77,7 @@ You can overwrite this query with whatever other query you wish to make to the s
 
 All agents use the 'gemini-2.5-flash-lite' model, which is good enough for testing. You can overwrite this in the code 
 and replace it with other available models.
+
+Execution can take around one minute.
+
+The file 'sample_output.txt' contains the full output of one run.
