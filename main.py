@@ -1,8 +1,10 @@
 import asyncio
+import logging
 import os
 
 from google.adk import Runner
 from google.adk.apps import App, ResumabilityConfig
+from google.adk.plugins import LoggingPlugin
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
 
@@ -23,6 +25,14 @@ with open('GOOGLE_API_KEY') as f: GOOGLE_API_KEY = f.read()
 
 os.environ["GOOGLE_API_KEY"] = GOOGLE_API_KEY
 os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "FALSE"
+
+
+# Configure logging with DEBUG log level.
+logging.basicConfig(
+    filename="logger.log",
+    level=logging.DEBUG,
+    format="%(filename)s:%(lineno)s %(levelname)s:%(message)s",
+)
 
 
 def check_for_approval(events):
@@ -111,6 +121,9 @@ async def main():
         name=APP_NAME,
         root_agent=coordinator_agent,
         resumability_config=ResumabilityConfig(is_resumable=True),
+        plugins=[
+            LoggingPlugin()
+        ]
     )
     runner = Runner(
         app=meal_designer_app,
