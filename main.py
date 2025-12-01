@@ -65,12 +65,8 @@ def print_agent_response(events):
                 print(f"Agent > {part.text}")
 
 
-async def run(runner_instance: Runner, session_service: InMemorySessionService, query: str):
-    session = await session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION)
-    await runner_instance.run_debug(query)
 
-
-async def run_shopper(runner_instance: Runner, session_service: InMemorySessionService, query: str):
+async def run_app(runner_instance: Runner, session_service: InMemorySessionService, query: str):
     print("running shopper...")
     await session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION)
     events = []
@@ -107,28 +103,21 @@ async def run_shopper(runner_instance: Runner, session_service: InMemorySessionS
 
 
 async def main():
-    # shopping_agent = agents.get_shopping_agent(MODEL_NAME)
     coordinator_agent = agents.get_coordinator_agent(MODEL_NAME)
 
     session_service = InMemorySessionService()  # for testing purposes. Switch to vertex to go in production
 
-    shipping_app = App(
+    meal_designer_app = App(
         name=APP_NAME,
         root_agent=coordinator_agent,
         resumability_config=ResumabilityConfig(is_resumable=True),
     )
-    shipping_runner = Runner(
-        app=shipping_app,  # Pass the app instead of the agent
+    runner = Runner(
+        app=meal_designer_app,
         session_service=session_service,
     )
 
-    # runner = Runner(agent=coordinator_agent,
-    #                 app_name=APP_NAME,
-    #                 session_service=session_service,
-    #                 memory_service=memory_service)
-
-    await run_shopper(shipping_runner, session_service, QUERY)
-    # asyncio.run(run(runner, session_service, QUERY))
+    await run_app(runner, session_service, QUERY)
 
 
 asyncio.run(main())

@@ -11,7 +11,7 @@ def get_coordinator_agent(model: str = "gemini-2.5-flash-lite") -> BaseAgent:
     coordinator_agent = SequentialAgent(
         name="coordinator",
         description="A coordinator agent for designing a weekly menu.",
-        sub_agents=[get_endocrine_agent(model),
+        sub_agents=[get_nutritionist_agent(model),
                     get_menu_designer_agent(model),
                     get_ingredient_finder_agent(model),
                     get_shopping_agent(model)],
@@ -20,8 +20,8 @@ def get_coordinator_agent(model: str = "gemini-2.5-flash-lite") -> BaseAgent:
     return coordinator_agent
 
 
-def get_endocrine_agent(model: str = "gemini-2.5-flash-lite") -> Agent:
-    endocrine_agent = LlmAgent(
+def get_nutritionist_agent(model: str = "gemini-2.5-flash-lite") -> Agent:
+    nutritionist_agent = LlmAgent(
         name="nutritionist",
         model=model,
         description="A agent emulating a nutritionist for designing healthy menus according to user requests or goals.",
@@ -34,11 +34,11 @@ def get_endocrine_agent(model: str = "gemini-2.5-flash-lite") -> Agent:
         output_key="menu_guidelines",
     )
 
-    return endocrine_agent
+    return nutritionist_agent
 #
 #
-# def get_endocrine_agent(model: str = "gemini-2.5-flash-lite") -> Agent:
-#     endocrine_agent = LlmAgent(
+# def get_nutritionist_agent(model: str = "gemini-2.5-flash-lite") -> Agent:
+#     nutritionist_agent = LlmAgent(
 #         name="nutritionist",
 #         model=model,
 #         description="A agent emulating a nutritionist for designing healthy menus according to user requests or goals.",
@@ -51,7 +51,7 @@ def get_endocrine_agent(model: str = "gemini-2.5-flash-lite") -> Agent:
 #         output_key="menu_guidelines",
 #     )
 #
-#     return endocrine_agent
+#     return nutritionist_agent
 
 
 def get_menu_designer_agent(model: str = "gemini-2.5-flash-lite") -> Agent:
@@ -168,7 +168,7 @@ def get_shopping_agent(model: str = "gemini-2.5-flash-lite") -> Agent:
                       - Order ID (if available)
                       - Number of ingredients and tota price
                     4. Keep responses concise but informative""",
-        tools=[FunctionTool(func=place_shipping_order)],
+        tools=[FunctionTool(func=place_ingredients_order)],
     )
 
     return shopping_agent
@@ -185,7 +185,7 @@ class ingredient_order:
         self.price = float(data[3])
 
 
-def place_shipping_order(
+def place_ingredients_order(
     ingredients: str, tool_context: ToolContext
 ) -> dict:
     """Places a shipping order. Requires approval if ordering more than 100 euros (LARGE_ORDER_THRESHOLD).
